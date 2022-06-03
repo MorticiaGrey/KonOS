@@ -29,6 +29,8 @@ _start:
 	# Call the global constructors.
 	call _init
 
+	# Pass ebx (pointer to boot data) as parameter
+	push %ebx
 	# Transfer control to the main kernel.
 	call kernel_main
 
