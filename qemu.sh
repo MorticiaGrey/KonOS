@@ -2,4 +2,4 @@
 set -e
 . ./iso.sh
 
-qemu-system-$(./target-triplet-to-arch.sh $HOST) -cdrom konos.iso
+qemu-system-$(./target-triplet-to-arch.sh $HOST) -m 256 -cdrom konos.iso

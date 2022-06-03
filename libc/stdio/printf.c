@@ -121,7 +121,7 @@ int printf(const char* restrict format, ...) {
 				// TODO: Set errno to EOVERFLOW
 				return -1;
 			}
-			if (!print("0x", 2) || !print(str, len))
+			if (!print(str, len))
 				return -1;
 			written += len;
 		} else if (*format == 'p') {
