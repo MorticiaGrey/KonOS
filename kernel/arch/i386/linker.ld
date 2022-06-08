@@ -38,6 +38,12 @@ SECTIONS
 		*(.bss)
 	}
 
+	/* End of the kernel, for memory management */
+	.end BLOCK(4k) : ALIGN(4k)
+	{
+		*(.end)
+	}
+
 	/* The compiler may produce other sections, put them in the proper place in
 	   in this file, if you'd like to include them in the final kernel. */
 }

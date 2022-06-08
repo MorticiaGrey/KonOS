@@ -26,11 +26,16 @@ stack_top:
 _start:
 	movl $stack_top, %esp
 
+	# Pass location of the end of kernel
+	push $end
+	# Pass magic as parameter
+	push %eax
+	# Pass ebx (pointer to boot data) as parameter
+	push %ebx
+	
 	# Call the global constructors.
 	call _init
 
-	# Pass ebx (pointer to boot data) as parameter
-	push %ebx
 	# Transfer control to the main kernel.
 	call kernel_main
 
@@ -39,3 +44,7 @@ _start:
 1:	hlt
 	jmp 1b
 .size _start, . - _start
+
+# This is placed at the end of the kernel for reference in memory management
+.section .end
+end: 

@@ -30,6 +30,10 @@ LIBK_CPPFLAGS:=$(LIBK_CPPFLAGS) $(KERNEL_ARCH_CPPFLAGS)
 FREEOBJS=\
 $(ARCH_FREEOBJS) \
 ctype/tolower.o \
+io/outb.o \
+io/inb.o \
+p_mem/p_mem_init.o \
+p_mem/p_mem_clean_list.o \
 stdio/printf.o \
 stdio/putchar.o \
 stdio/puts.o \

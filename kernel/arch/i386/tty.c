@@ -2,6 +2,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include <asm/io.h>
 
 #include <kernel/tty.h>
 
@@ -54,6 +55,7 @@ void terminal_putchar(char c) { //TODO: scrolling
 		if (++terminal_row == VGA_HEIGHT)
 			terminal_row = 0;
 	}
+	update_cursor(terminal_column, terminal_row);
 }
 
 void terminal_write(const char* data, size_t size) {
@@ -63,4 +65,36 @@ void terminal_write(const char* data, size_t size) {
 
 void terminal_writestring(const char* data) {
 	terminal_write(data, strlen(data));
+}
+
+void enable_cursor(uint8_t cursor_start, uint8_t cursor_end) {
+	outb(0x3D4, 0x0A);
+	outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
+
+	outb(0x3D4, 0x0B);
+	outb(0x3D5, (inb(0x3D5) & 0xE0) | cursor_end);
+}
+
+void disable_cursor() {
+	outb(0x3D4, 0xBA);
+	outb(0x3D5, 0x20);
+}
+
+void update_cursor(int x, int y) {
+	uint16_t pos = y * VGA_WIDTH + x;
+
+	outb(0x3D4, 0x0F);
+	outb(0x3D5, (uint8_t) (pos & 0xFF));
+
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+}
+
+uint16_t get_cursor_position(void) {
+	uint16_t pos = 0;
+	outb(0x3D4, 0x0F);
+    pos |= inb(0x3D5);
+    outb(0x3D4, 0x0E);
+    pos |= ((uint16_t)inb(0x3D5)) << 8;
+    return pos;
 }

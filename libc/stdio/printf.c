@@ -17,7 +17,7 @@ static bool print(const char* data, size_t length) {
 
 // TODO: Hex field, other data insertion if I feel like it
 // This is commented in such psychotic detail so I can modify it effectively since I didn't originally write it (thanks osdev.net)
-int printf(const char* restrict format, ...) {
+int printf(const char* restrict format, ...) { // It seems that printf has issues if more than three params are passed. Look into this
 	// Defines data that will be added to format
 	va_list parameters;
 	va_start(parameters, format);
@@ -94,7 +94,7 @@ int printf(const char* restrict format, ...) {
 		} else if (*format == 'd' || *format == 'i') { // Print signed decimal integer
 			format++;
 			char str[MAX_ITOA_DIGITS + 1];
-			itoa(((int) va_arg(parameters, int)), str, 10);
+			itoa((va_arg(parameters, int)), str, 10);
 			size_t len = strlen(str);
 			if (maxrem < len) {
 				// TODO: Set errno to EOVERFLOW
@@ -103,7 +103,7 @@ int printf(const char* restrict format, ...) {
 			if (!print(str, len))
 				return -1;
 			written += len;
-		} else if (*format == 'x' || *format == 'X') { // Unsigned hex integer, lower
+		} else if (*format == 'x' || *format == 'X') { // Unsigned hex integer
 			format++;
 			char str[MAX_ITOA_DIGITS + 1];
 			int param = (int) va_arg(parameters, int);
