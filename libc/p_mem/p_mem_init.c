@@ -8,6 +8,14 @@ unsigned int global_p_mem_descriptor_size = sizeof(p_mem_descriptor_t);
 size_t global_num_p_mem_descriptors = 0;
 p_mem_descriptor_t *global_p_mem_descriptors = NULL;
 
+// Aligns passed value to a page boundary, behaves like ceil()
+void* align(void* addr) {
+	if (((unsigned int) addr) % PAGE_SIZE == 0) {
+		return addr;
+	}
+	return addr + (PAGE_SIZE - (((int) addr) % PAGE_SIZE));
+}
+
 int p_mem_init(multiboot_info_t *mbd, void* kernel_end_location) {
 	// Check for valid memory map
 	if (!CHECK_FLAG(mbd->flags, 6)) {
@@ -45,6 +53,9 @@ int p_mem_init(multiboot_info_t *mbd, void* kernel_end_location) {
 	// Remember to separate list entries under/over 1M when updating
 	for (i = 0; i < global_num_p_mem_descriptors; i++) {
 		p_mem_descriptor_t *desc = P_MEM_GET_PTR(i);
+		// Align addresses on page boundaries
+		desc->addr = align(desc->addr);
+		// Don't allocate memory under 1M
 		if (desc->addr < 0x100000) {
 			desc->free = 0;
 		}

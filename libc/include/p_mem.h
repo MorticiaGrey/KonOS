@@ -1,6 +1,7 @@
 ///@file p_mem.h
 
 // This is the header for the physical memory manager. It will mostly handle the lowest level of memory management
+// (p_mem stands for physical_memory)
 
 #ifndef _P_MEM_H
 #define _P_MEM_H 1
@@ -19,12 +20,13 @@ extern "C" {
 
 #define PAGE_SIZE 4096 // How many bytes in a page
 
+#define PAGES_LIST_BUFFER 2
+
 // Error codes
 #define P_MEM_SUCCESS                0
 #define P_MEM_ERROR_PAGE_TAKEN       1
 #define P_MEM_ERROR_PAGE_FREE        2
-#define P_MEM_ERROR_INVALID_ADDRESS  3
-#define ERROR_MMAP_NOT_DETECTED      4
+#define ERROR_MMAP_NOT_DETECTED      3
 
 // Writing this line all the time is annoying, converts from index to pointer
 #define P_MEM_GET_PTR(index) ((p_mem_descriptor_t*) (global_p_mem_descriptors + ((index) * sizeof(p_mem_descriptor_t))))
@@ -46,22 +48,29 @@ typedef struct p_mem_descriptor p_mem_descriptor_t;
  * @param[out] code Code indicating success or details of failure
  */
 int p_mem_init(multiboot_info_t *mbd, void* kernel_end_location);
+
 /**
- * Allocates a page frame
+ * Allocates the number of page frames requested starting at the given address
+ * 
+ * Address is rounded to a lower page boundary
  * 
  * @param[in] addr Address of the page to be allocated
  * @param[in] pages How many pages to allocate
- * @param[out] code Code indicating success or details of failure
+ * @param[out] ptr Pointer to beginning of allocated page frame(s)
  */
-int palloc(void* addr, uint16_t pages);
+void *palloc(void* addr, uint32_t pages);
+
 /**
- * Frees a page frame
+ * Frees the number of page frames requested stating at the given address
+ * 
+ * Address is rounded to a lower page boundary. -1 is returned if there's an error, more details in errno
  * 
  * @param[in] addr Address of the page frame to be freed
  * @param[in] pages How many pages to free
  * @param[out] code Code indicating success or details of failure
  */
-int pfree(void* addr, uint16_t pages);
+int pfree(void* addr, uint32_t pages);
+
 /**
  * Gets the p_mem_descriptor for the specified address
  * 
@@ -71,6 +80,7 @@ int pfree(void* addr, uint16_t pages);
  * @param[out] desc_ptr Pointer to the descriptor
  */
 p_mem_descriptor_t *get_descriptor(void* addr);
+
 /**
  * Cleans the memory list, combines entries, etc.
  */

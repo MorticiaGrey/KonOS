@@ -1,13 +1,15 @@
 #include <math.h>
 
+extern int errno = 0;
+
 double pow(double x, double y) {
 	if (x + y == 0) {
 		errno = EDOM;
 		return 0;
 	}
-	int i;
+	int i, result = 1;
 	for (i = 0; i < y; i++) {
-		x = x * x;
+		result *= x;
 	}
-	return x;
+	return result;
 }

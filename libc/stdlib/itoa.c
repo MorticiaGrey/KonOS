@@ -2,17 +2,10 @@
 
 #include <string.h>
 #include <stdio.h>
+#include <math.h>
 
 // Used to convert digits
 static const char *digits = "0123456789ABCDEF\0";
-
-// TODO: THIS NEEDS TO BE IN MATH.H!!! MOVE IT WHEN MATH.H EXISTS!!!
-int get_exponent(int base, int exp) {
-	int i, result = 1;
-    for (i = 0; i < exp; i++)
-        result *= base;
-    return result;
-}
 
 // Convert decimal character, only works on single digits
 static char get_character(int val, int base) {
@@ -42,7 +35,7 @@ char *itoa(int value, char *buffer, int base) {
 		remainder = remainder / base;
 		len++;
 	}
-	digits[len] = value / get_exponent(base, len - 1); // Get and add first digit
+	digits[len] = value / pow(base, len - 1); // Get and add first digit
 
 	// Insert digits into buffer, separate loop because it's reversed
 	int i;
