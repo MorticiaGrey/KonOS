@@ -12,6 +12,7 @@
 
 #include <stdint.h>
 #include <errno.h>
+#include <stdflag.h>
 
 #define EOF (-1)
 
@@ -24,7 +25,7 @@ struct std_list {
     uint32_t length;
     uint32_t entry_size;
     uint32_t max_number_entries;
-}
+};
 typedef struct std_list std_list_t;
 
 /**

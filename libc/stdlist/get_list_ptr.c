@@ -2,8 +2,8 @@
 
 #include <errno.h>
 
-extern std_list_t curr_list;
-extern int errno = 0;
+std_list_t curr_list;
+int errno = 0;
 
 void* get_list_ptr(uint32_t index) {
 	if (index <= curr_list.length) {

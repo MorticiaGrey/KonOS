@@ -11,6 +11,7 @@
 #include <kernel/multiboot.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdflag.h>
 
 #define EOF (-1)
 
@@ -19,6 +20,8 @@ extern "C" {
 #endif
 
 #define PAGE_SIZE 4096 // How many bytes in a page
+
+#define PAGES_LIST_BUFFER 2
 
 // Error codes
 #define P_MEM_SUCCESS                0
@@ -29,11 +32,14 @@ extern "C" {
 // Writing this line all the time is annoying, converts from index to pointer
 #define P_MEM_GET_PTR(index) ((p_mem_descriptor_t*) (global_p_mem_descriptors + ((index) * sizeof(p_mem_descriptor_t))))
 
+// Page has enough for ~50 entries, allocate 8 pages for list
 struct p_mem_descriptor {
-    void* addr;             // Beginning of the place in memory this describes
-    size_t pages;           // How many pages are taken up
-    uint8_t free;           // If area described is free or not
-    uint8_t remove_entry;   // Used for list cleaning
+    void* addr;                // Beginning of the place in memory this describes
+    uint32_t pages;            // How many pages are taken up
+    union { // Save space, these are both bit flags
+        uint8_t free;          // If area described is free or not  (first bit)
+        uint8_t remove_entry;  // Used for list cleaning            (second bit)
+    };
 };
 typedef struct p_mem_descriptor p_mem_descriptor_t;
 
@@ -54,14 +60,14 @@ int p_mem_init(multiboot_info_t *mbd, void* kernel_end_location);
  * 
  * @param[in] addr Address of the page to be allocated
  * @param[in] pages How many pages to allocate
- * @param[out] code Code indicating success or details of failure
+ * @param[out] ptr Pointer to beginning of allocated page frame(s)
  */
-int palloc(void* addr, uint32_t pages);
+void *palloc(void* addr, uint32_t pages);
 
 /**
  * Frees the number of page frames requested stating at the given address
  * 
- * Address is rounded to a lower page boundary
+ * Address is rounded to a lower page boundary. -1 is returned if there's an error, more details in errno
  * 
  * @param[in] addr Address of the page frame to be freed
  * @param[in] pages How many pages to free
@@ -72,7 +78,7 @@ int pfree(void* addr, uint32_t pages);
 /**
  * Gets the p_mem_descriptor for the specified address
  * 
- * Returns -1 if the address provided is invalid. Output may be a block containing address
+ * Returns -1 if the address provided is invalid
  * 
  * @param[in] addr Address descriptor is wanted of
  * @param[out] desc_ptr Pointer to the descriptor

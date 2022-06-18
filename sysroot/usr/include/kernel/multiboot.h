@@ -22,7 +22,9 @@
 #ifndef MULTIBOOT_HEADER
 #define MULTIBOOT_HEADER 1
 
+#ifndef _STDFLAG_H
 #define CHECK_FLAG(flags,bit)   ((flags) & (1 << (bit))) // not originally part of this header
+#endif
 
 /* How many bytes from the start of the file we search for the header. */
 #define MULTIBOOT_SEARCH                        8192

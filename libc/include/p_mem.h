@@ -11,6 +11,7 @@
 #include <kernel/multiboot.h>
 #include <stdint.h>
 #include <stddef.h>
+#include <stdflag.h>
 
 #define EOF (-1)
 
@@ -31,11 +32,14 @@ extern "C" {
 // Writing this line all the time is annoying, converts from index to pointer
 #define P_MEM_GET_PTR(index) ((p_mem_descriptor_t*) (global_p_mem_descriptors + ((index) * sizeof(p_mem_descriptor_t))))
 
+// Page has enough for ~50 entries, allocate 8 pages for list
 struct p_mem_descriptor {
-    void* addr;             // Beginning of the place in memory this describes
-    size_t pages;           // How many pages are taken up
-    uint8_t free;           // If area described is free or not
-    uint8_t remove_entry;   // Used for list cleaning
+    void* addr;                // Beginning of the place in memory this describes
+    uint32_t pages;            // How many pages are taken up
+    union { // Save space, these are both bit flags
+        uint8_t free;          // If area described is free or not  (first bit)
+        uint8_t remove_entry;  // Used for list cleaning            (second bit)
+    };
 };
 typedef struct p_mem_descriptor p_mem_descriptor_t;
 

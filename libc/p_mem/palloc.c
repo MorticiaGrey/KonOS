@@ -2,7 +2,7 @@
 
 #include <errno.h>
 
-extern int errno = 0;
+int errno = 0;
 
 // Aligns passed value to a page boundary, behaves like ceil()
 void* align(void* addr) {

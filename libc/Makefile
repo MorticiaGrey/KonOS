@@ -44,6 +44,12 @@ stdio/putchar.o \
 stdio/puts.o \
 stdlib/abort.o \
 stdlib/itoa.o \
+stdlist/add_list_entry.o \
+stdlist/append_list_entry.o \
+stdlist/copy_list_entry.o \
+stdlist/get_list_ptr.o \
+stdlist/get_memory_usage.o \
+stdlist/rm_list_entry.o \
 string/memcmp.o \
 string/memcpy.o \
 string/memmove.o \

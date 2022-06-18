@@ -1,6 +1,6 @@
 #include <math.h>
 
-extern int errno = 0;
+int errno = 0;
 
 double pow(double x, double y) {
 	if (x + y == 0) {

@@ -17,7 +17,7 @@ extern int errno;
 #define EDOM   1 // Invalid numeric domain, bad argument in a math function
 #define EILSEQ 2 // Illegal byte sequence, not sure exactly when this is used
 #define ERANGE 3 // Argument out of range, an argument to a math function is too large/when args generally are too large
-#define EILADD 4 // Illegal address, used when a pointed isn't valid
+#define EILADD 4 // Illegal address, used when a pointer isn't valid
 
 /**
  * Gets the human readable string which corresponds to a given error code
